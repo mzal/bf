@@ -26,6 +26,7 @@ _Bool reset(size_t mem_size, size_t stack_size) {
 int main() {
      const size_t mem_size = MEM_SIZE;
      const size_t stack_size = STACK_SIZE;
+
      unsigned char input[INPUT_BUFF] = {0};
      if(!init(mem_size, stack_size)) {
           return 1;
@@ -35,7 +36,7 @@ int main() {
 
      while (strcmp((char *)input, "q\n")) {
           fputs(prompt, stdout);
-          fgets((char *)input, 280, stdin);
+          fgets((char *)input, INPUT_BUFF, stdin);
           if (strcmp((char*)input, "r\n")) {
                reset(mem_size, stack_size);
           }
