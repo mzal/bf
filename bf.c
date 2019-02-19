@@ -32,7 +32,7 @@ _Bool init_lpstack(size_t stack_size) {
      return (_Bool)lpstack.base;
 }
 
-_Bool resize_stack() {
+_Bool resize_lpstack() {
      const unsigned char ** new_base = malloc(sizeof(unsigned char*) * lpstack.size * 2);
      if (new_base == NULL) {
           return (_Bool) NULL;
@@ -52,8 +52,8 @@ _Bool resize_stack() {
 void lpstack_push(const unsigned char* ptr) {
      *lpstack.top = ptr;
      lpstack.top++;
-     if (lpstack.top > lpstack.base + lpstack.size - 2) {
-          resize_stack();
+     if (lpstack.top > lpstack.base + lpstack.size - 1) {
+          resize_lpstack();
      }
 }
 
@@ -72,9 +72,10 @@ enum opcode {
      DECR = '-',  // decrement cell
      READ = '.',  // output data from cell
      WRIT = ',',  // write data to cell
+     READ_NUM = '*',
      LPST = '[',  // if cell == 0 jump after matching ]
      LPEN = ']',  // if cell != 0 jump back to matching [
-     STOP = '\n',    // end execution
+     STOP = 0,    // end execution
 };
 
 const unsigned char* find_lpen() {
@@ -137,6 +138,10 @@ int eval(const unsigned char *expr){
                break;
 
           case READ:
+               fprintf(stdout, "%c", *vm.mem.p);
+               break;
+
+          case READ_NUM:
                fprintf(stdout, "%hu\n", (unsigned int)(*vm.mem.p));
                break;
 
@@ -150,10 +155,11 @@ int eval(const unsigned char *expr){
 
           case LPST:
                if (*vm.mem.p == 0) {
-                    vm.ip = find_lpen();
-                    if (vm.ip == (unsigned char *)1) {
+                    const unsigned char* match_lpen = find_lpen();
+                    if (match_lpen == (unsigned char *) NULL) {
                          return INV_LOOP;
                     }
+                    vm.ip = match_lpen;
                }
                else {
                      lpstack_push(vm.ip - 1);
@@ -173,7 +179,8 @@ int eval(const unsigned char *expr){
                return SUCCESS;
 
           default:
-               return INV_OPCODE;
+               ;
+               /* return INV_OPCODE; */
           }
      }
      return SUCCESS;

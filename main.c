@@ -3,17 +3,17 @@
 #include <string.h>
 
 int main() {
-     unsigned char input[100] = {0};
-     if (!init_vm(100))
+     unsigned char input[280] = {0};
+     if (!init_vm(280))
           return 1;
-     if (!init_lpstack(100))
+     if (!init_lpstack(280))
           return 1;
 
      char prompt[] = "> ";
-     
+
      while (strcmp((char *)input, "q\n")) {
           fputs(prompt, stdout);
-          fgets((char *)input, 100, stdin);
+          fgets((char *)input, 280, stdin);
           if (eval(input) == 0) {
                strcpy(prompt, "> ");
           }
