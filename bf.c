@@ -19,6 +19,11 @@ _Bool init_vm(size_t mem_size) {
      return (_Bool)vm.mem.base;
 }
 
+void del_vm() {
+     free(vm.mem.base);
+     return;
+}
+
 struct {
      const unsigned char** base;
      const unsigned char** top;
@@ -30,6 +35,11 @@ _Bool init_lpstack(size_t stack_size) {
      lpstack.top = lpstack.base;
      lpstack.size = stack_size;
      return (_Bool)lpstack.base;
+}
+
+void del_lpstack() {
+     free(lpstack.base);
+     return;
 }
 
 _Bool resize_lpstack() {
