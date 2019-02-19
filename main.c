@@ -23,14 +23,13 @@ _Bool reset(size_t mem_size, size_t stack_size) {
 #define STACK_SIZE 280
 #define INPUT_BUFF 280
 
-int main() {
-     const size_t mem_size = MEM_SIZE;
-     const size_t stack_size = STACK_SIZE;
+void usage(char **argv) {
+     printf("Usage:\n%s [filename]", argv[0]);
+     return;
+}
 
+void repl() {
      unsigned char input[INPUT_BUFF] = {0};
-     if(!init(mem_size, stack_size)) {
-          return 1;
-     }
 
      char prompt[] = "> ";
 
@@ -38,7 +37,7 @@ int main() {
           fputs(prompt, stdout);
           fgets((char *)input, INPUT_BUFF, stdin);
           if (strcmp((char*)input, "r\n")) {
-               reset(mem_size, stack_size);
+               reset(MEM_SIZE, STACK_SIZE);
           }
           if (eval(input) == 0) {
                strcpy(prompt, "> ");
@@ -46,6 +45,39 @@ int main() {
           else {
                strcpy(prompt, "X ");
           }
+     }
+     return;
+}
+
+int main(int argc, char **argv) {
+
+     if(!init(MEM_SIZE, STACK_SIZE)) {
+          return 1;
+     }
+
+     if (argc > 1) {
+          FILE * input_f = fopen(argv[1], "r");
+          if (input_f == NULL) {
+               usage(argv);
+               return 1;
+          }
+          else {
+               fseek(input_f, 0, SEEK_END);
+               size_t length = ftell(input_f);
+               fseek(input_f, 0, SEEK_SET);
+               char * buf = malloc(length);
+               if (buf) {
+                    fread(buf, 1, length, input_f);
+               }
+               fclose(input_f);
+
+               int rv = eval((unsigned char *) buf);
+
+               fprintf(stdout, "\n%d", rv);
+          }
+     }
+     else {
+          repl();
      }
 
      return 0;

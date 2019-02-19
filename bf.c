@@ -83,6 +83,7 @@ enum opcode {
      READ = '.',  // output data from cell
      WRIT = ',',  // write data to cell
      READ_NUM = '*',
+     WRIT_NUM = ';',
      LPST = '[',  // if cell == 0 jump after matching ]
      LPEN = ']',  // if cell != 0 jump back to matching [
      STOP = 0,    // end execution
@@ -151,11 +152,15 @@ int eval(const unsigned char *expr){
                fprintf(stdout, "%c", *vm.mem.p);
                break;
 
+          case WRIT:
+               fscanf(stdin, "%c", vm.mem.p);
+               break;
+
           case READ_NUM:
                fprintf(stdout, "%hu\n", (unsigned int)(*vm.mem.p));
                break;
 
-          case WRIT:
+          case WRIT_NUM:
                ;
                short unsigned int input;
                fscanf(stdin, "%hu", &input);
@@ -190,7 +195,6 @@ int eval(const unsigned char *expr){
 
           default:
                ;
-               /* return INV_OPCODE; */
           }
      }
      return SUCCESS;
