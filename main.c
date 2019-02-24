@@ -36,7 +36,7 @@ void repl() {
      while (strcmp((char *)input, "q\n")) {
           fputs(prompt, stdout);
           fgets((char *)input, INPUT_BUFF, stdin);
-          if (strcmp((char*)input, "r\n")) {
+          if (!strcmp((char*)input, "r\n")) {
                reset(MEM_SIZE, STACK_SIZE);
           }
           if (eval(input) == 0) {
